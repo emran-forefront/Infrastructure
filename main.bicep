@@ -15,6 +15,12 @@ param hubAddressPrefix string = '10.0.0.0/16'
 param spokeVnetName string = 'spoke-vnet'
 param spokeAddressPrefix string = '10.1.0.0/16'
 
+@description('Storage account name')
+param storageAccountName string = 'mystorageacct001'
+
+@description('Blob container name')
+param containerName string = 'mycontainer'
+
 module rgModule './modules/resourceGroup.bicep' = {
   name: 'deployRgModule'
   params: {
@@ -61,5 +67,24 @@ module peering './modules/vnetPeering.bicep' = {
   }
 }
   
+module storageModule './modules/storageWithContainer.bicep' = {
+  name: 'deployStorageWithContainer'
+  scope: resourceGroup(rgName)
+  params: {
+    storageAccountName: storageAccountName
+    location: rgLocation
+    sku: 'Standard_LRS'
+    kind: 'StorageV2'
+    containerName: containerName
+    containerAccessLevel: 'Private'
+    tags: {
+      environment: 'prod'
+      owner: 'IT'
+    }
+  }
+}
 
+output storageAccountName string = storageModule.outputs.storageAccountName
+output storageAccountId string = storageModule.outputs.storageAccountId
+output containerName string = storageModule.outputs.containerName
 
