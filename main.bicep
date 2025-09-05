@@ -7,6 +7,12 @@ param rgName string = 'my-prod-rg'
 param rgLocation string = 'westeurope'
 
 
+@description('Subscription name')
+param subscriptionName string
+
+@description('Billing scope for the subscription')
+param billingScope string
+
 // Hub parameters
 param hubVnetName string = 'hub-vnet'
 param hubAddressPrefix string = '10.0.0.0/16'
@@ -31,6 +37,15 @@ module mg './modules/managementGroups.bicep' = {
   name: 'mg-deployment'
   params: {
     companyPrefix: companyPrefix
+  }
+}
+
+//  Deploy Subscription
+module subMod './modules/subscription.bicep' = {
+  name: 'sub-deploy'
+  params: {
+    subscriptionName: subscriptionName
+    billingScope: billingScope
   }
 }
 
