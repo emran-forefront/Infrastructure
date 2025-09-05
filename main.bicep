@@ -88,3 +88,16 @@ output storageAccountName string = storageModule.outputs.storageAccountName
 output storageAccountId string = storageModule.outputs.storageAccountId
 output containerName string = storageModule.outputs.containerName
 
+
+@description('Prefix for company resources')
+param companyPrefix string = 'mycompany'
+
+module monitoring './modules/monitoring.bicep' = {
+  name: 'monitoring-deployment'
+  scope: resourceGroup('rg-monitoring', 'East US')
+  params: {
+    companyPrefix: companyPrefix
+    location: 'East US'
+  }
+}
+
